@@ -19,9 +19,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect('mongodb://localhost:27017/NNPTUD-S2');
+let mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/NNPTUD-S2';
+mongoose.connect(mongoUri);
 mongoose.connection.on('connected', function () {
   console.log("da connect");
+})
+mongoose.connection.on('error', function (error) {
+  console.log('mongo error:', error.message);
 })
 
 //localhost:3000
@@ -32,6 +36,7 @@ app.use('/roles', require('./routes/roles'));
 app.use('/auth', require('./routes/auth'));
 app.use('/carts', require('./routes/carts'));
 app.use('/products', require('./routes/products'));
+app.use('/reservations', require('./routes/reservations'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
